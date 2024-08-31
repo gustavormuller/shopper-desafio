@@ -1,19 +1,21 @@
-import { FastifyRequest, FastifyReply } from "fastify";
-import * as measureService from "../services/measureService";
+import { FastifyRequest, FastifyReply } from 'fastify';
+import * as measureService from '../services/measureService';
 
 export async function uploadMeasure(req: FastifyRequest, reply: FastifyReply) {
   try {
     const measure = await measureService.uploadMeasure(req.body as any);
-    reply.status(200).send(measure);
+
+    reply.status(200).send({
+      image_url: measure.image_url,
+      measure_value: measure.measure_value,
+      measure_uuid: measure.measure_uuid,
+      measure_type: measure.measure_type,
+    });
   } catch (error: unknown) {
-    reply
-      .status(400)
-      .send({
-        error_code: "INVALID_DATA",
-        error_description: (error as Error).message,
-      });
+    reply.status(400).send({ error_code: "UPLOAD_FAILED", error_description: (error as Error).message });
   }
 }
+
 
 export async function confirmMeasure(req: FastifyRequest, reply: FastifyReply) {
   try {
@@ -23,12 +25,10 @@ export async function confirmMeasure(req: FastifyRequest, reply: FastifyReply) {
     );
     reply.status(200).send({ success: true });
   } catch (error: unknown) {
-    reply
-      .status(400)
-      .send({
-        error_code: "INVALID_DATA",
-        error_description: (error as Error).message,
-      });
+    reply.status(400).send({
+      error_code: "INVALID_DATA",
+      error_description: (error as Error).message,
+    });
   }
 }
 
@@ -53,11 +53,9 @@ export async function listMeasures(
       .status(200)
       .send({ customer_code: req.params.customer_code, measures });
   } catch (error: unknown) {
-    reply
-      .status(404)
-      .send({
-        error_code: "MEASURES_NOT_FOUND",
-        error_description: (error as Error).message,
-      });
+    reply.status(404).send({
+      error_code: "MEASURES_NOT_FOUND",
+      error_description: (error as Error).message,
+    });
   }
 }

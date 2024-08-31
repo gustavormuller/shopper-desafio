@@ -1,5 +1,9 @@
 import fastify, { FastifyInstance } from 'fastify';
 import { measureRoutes } from './routes/measureRoutes';
+import dotenv from 'dotenv';
+
+// Carregando variáveis de ambiente
+dotenv.config();
 
 const app: FastifyInstance = fastify({ logger: true });
 
